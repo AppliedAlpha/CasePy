@@ -1,3 +1,6 @@
+import { useState } from 'react';
+import ExprModal from './ExprModal';
+
 const ERROR_LABEL = {
   RuntimeError: 'RuntimeError',
   TimeLimitExceeded: 'TLE',
@@ -34,6 +37,8 @@ function ResultBox({ result }) {
 }
 
 export default function StdinGrid({ testCases, previewResults, onChange }) {
+  const [modalIdx, setModalIdx] = useState(null);
+
   function addCase() {
     onChange([...testCases, '']);
   }
@@ -47,6 +52,11 @@ export default function StdinGrid({ testCases, previewResults, onChange }) {
     const next = [...testCases];
     next[idx] = value;
     onChange(next);
+  }
+
+  function handleExprConfirm(idx, resolved) {
+    updateCase(idx, resolved);
+    setModalIdx(null);
   }
 
   return (
@@ -76,13 +86,23 @@ export default function StdinGrid({ testCases, previewResults, onChange }) {
                 #{idx + 1}
               </span>
 
-              <textarea
-                value={tc}
-                onChange={e => updateCase(idx, e.target.value)}
-                rows={4}
-                placeholder={`테스트케이스 ${idx + 1}번 stdin...`}
-                className="flex-1 min-w-0 border border-slate-300 rounded-lg px-3 py-2 text-sm font-mono resize-y focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
-              />
+              {/* stdin 영역: textarea + 표현식 버튼 */}
+              <div className="flex-1 min-w-0 flex flex-col gap-1">
+                <textarea
+                  value={tc}
+                  onChange={e => updateCase(idx, e.target.value)}
+                  rows={4}
+                  placeholder={`테스트케이스 ${idx + 1}번 stdin...`}
+                  className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm font-mono resize-y focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
+                />
+                <button
+                  type="button"
+                  onClick={() => setModalIdx(idx)}
+                  className="self-end flex items-center gap-1 px-2 py-1 text-xs text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 rounded-md transition-colors"
+                >
+                  <span className="text-[10px]">✦</span> 표현식으로 입력
+                </button>
+              </div>
 
               <ResultBox result={result} />
 
@@ -99,6 +119,15 @@ export default function StdinGrid({ testCases, previewResults, onChange }) {
           );
         })}
       </div>
+
+      {/* 모달 */}
+      {modalIdx !== null && (
+        <ExprModal
+          caseIndex={modalIdx}
+          onConfirm={(resolved) => handleExprConfirm(modalIdx, resolved)}
+          onCancel={() => setModalIdx(null)}
+        />
+      )}
     </div>
   );
 }
