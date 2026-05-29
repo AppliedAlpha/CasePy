@@ -1,4 +1,4 @@
-# CasePy — OJ 테스트케이스 패키지 빌더
+# <img src="frontend/public/icon.ico" width="28" style="vertical-align:middle; margin-right:6px;"> CasePy — OJ 테스트케이스 패키지 빌더
 
 교내 **온라인 저지(OJ)** 시스템에 등록할 알고리즘 문제의 채점 패키지를 자동으로 생성하는 로컬 웹 도구입니다.  
 정해 파이썬 코드를 입력하면, 각 테스트케이스의 stdin을 실행해 stdout을 자동 생성하고 규격에 맞는 `.zip` 파일로 패키징합니다.
