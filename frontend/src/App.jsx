@@ -2,6 +2,7 @@ import { useState } from 'react';
 import MetaForm from './components/MetaForm';
 import StdinGrid from './components/StdinGrid';
 import CodeEditor from './components/CodeEditor';
+import ExampleCount from './components/ExampleCount';
 import DescEditor from './components/DescEditor';
 import StatusBanner from './components/StatusBanner';
 import { useToast } from './components/Toast.jsx';
@@ -12,6 +13,7 @@ const INITIAL_STATE = {
   testcaseDir: '',
   description: '',
   solutionCode: '',
+  exampleCount: 0,
   testCases: [''],
 };
 
@@ -103,6 +105,7 @@ export default function App() {
           description: form.description,
           solution_code: form.solutionCode,
           test_cases: form.testCases,
+          example_count: form.exampleCount,
         }),
       });
 
@@ -180,6 +183,11 @@ export default function App() {
           <CodeEditor
             value={form.solutionCode}
             onChange={v => handleMetaChange('solutionCode', v)}
+          />
+
+          <ExampleCount
+            value={form.exampleCount}
+            onChange={v => handleMetaChange('exampleCount', v)}
           />
 
           <StdinGrid

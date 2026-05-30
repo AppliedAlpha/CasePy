@@ -23,6 +23,12 @@ def generate_package():
     test_cases = data.get("test_cases", [])
     time_limit = float(data.get("time_limit", 1.0))
 
+    try:
+        example_count = int(data.get("example_count", 0) or 0)
+    except (TypeError, ValueError):
+        example_count = 0
+    example_count = max(0, min(3, example_count))
+
     if not prob_id or not sol_code:
         return jsonify({
             "status": "failed",
@@ -38,12 +44,10 @@ def generate_package():
         case_folder_path = os.path.join(tmpdir, target_dir)
         os.makedirs(case_folder_path, exist_ok=True)
 
-        with open(os.path.join(tmpdir, f"{prob_id}.txt"), "w", newline="\n", encoding="utf-8") as f:
-            f.write(description)
-
         with open(os.path.join(tmpdir, f"{prob_id}.py"), "w", newline="\n", encoding="utf-8") as f:
             f.write(sol_code)
 
+        captured_stdouts = []
         for idx, stdin_str in enumerate(test_cases, start=1):
             with open(os.path.join(case_folder_path, f"{idx}.in"), "w", newline="\n", encoding="utf-8") as f:
                 f.write(stdin_str)
@@ -65,6 +69,8 @@ def generate_package():
                         "traceback": res.stderr
                     }), 422
 
+                captured_stdouts.append(res.stdout)
+
                 with open(os.path.join(case_folder_path, f"{idx}.out"), "w", newline="\n", encoding="utf-8") as f:
                     f.write(res.stdout)
 
@@ -75,6 +81,18 @@ def generate_package():
                     "message": f"테스트 케이스 {idx}번 실행 중 제한 시간({time_limit}초)을 초과했습니다. 알고리즘 효율성을 재고하십시오.",
                     "traceback": None
                 }), 422
+
+        # 지문 txt 작성 — 선택한 개수만큼 앞쪽 케이스의 입출력 예시를 끝에 append
+        final_description = description
+        for n in range(1, min(example_count, len(captured_stdouts)) + 1):
+            stdin_n = test_cases[n - 1]
+            stdout_n = captured_stdouts[n - 1]
+            final_description += (
+                f"\n\n[입력 예시 {n}]\n{stdin_n}\n\n[출력 예시 {n}]\n{stdout_n}"
+            )
+
+        with open(os.path.join(tmpdir, f"{prob_id}.txt"), "w", newline="\n", encoding="utf-8") as f:
+            f.write(final_description)
 
         zip_output_path = os.path.join(tempfile.gettempdir(), f"{prob_id}_bundle.zip")
         with zipfile.ZipFile(zip_output_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
