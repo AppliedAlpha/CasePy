@@ -1,0 +1,60 @@
+/* react-simple-code-editor + Prism (light theme) for Python */
+
+.code-editor {
+  min-height: 20rem;
+}
+
+/* 편집 textarea와 하이라이트 pre의 정렬·줄높이를 일치시킨다 */
+.code-editor :where(textarea, pre) {
+  line-height: 1.6 !important;
+  tab-size: 4;
+}
+
+/* caret 색상 (투명 textarea라 명시 필요) */
+.code-editor .code-editor__textarea {
+  caret-color: #4f46e5;
+  outline: none;
+}
+
+/* placeholder 색상 */
+.code-editor .code-editor__textarea::placeholder {
+  color: #94a3b8;
+}
+
+/* ── Prism Python 토큰 색상 ───────────────────────────── */
+.code-editor .token.comment {
+  color: #94a3b8;
+  font-style: italic;
+}
+.code-editor .token.keyword {
+  color: #7c3aed;
+  font-weight: 600;
+}
+.code-editor .token.builtin {
+  color: #0891b2;
+}
+.code-editor .token.string,
+.code-editor .token.triple-quoted-string {
+  color: #16a34a;
+}
+.code-editor .token.number {
+  color: #ea580c;
+}
+.code-editor .token.boolean,
+.code-editor .token.constant {
+  color: #ea580c;
+}
+.code-editor .token.function {
+  color: #2563eb;
+}
+.code-editor .token.decorator,
+.code-editor .token.annotation {
+  color: #db2777;
+}
+.code-editor .token.operator,
+.code-editor .token.punctuation {
+  color: #475569;
+}
+.code-editor .token.class-name {
+  color: #ca8a04;
+}
